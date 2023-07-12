@@ -20,4 +20,20 @@ const password = {
   max_length: "Password cannot be longer than 30 Characters",
 };
 
-export { name, email, password };
+const user_exists =
+  "Sorry, the user account could not be created as a user with the same username or email address already exists in our system. Please choose a different username or email address";
+
+const invalid_credentials =
+  "We're sorry, but the credentials you provided are invalid. Please ensure that you have entered the correct username and password associated with your account";
+
+const auth_provider =
+  "This account has been created through an Auth Provider, please login through that provider";
+
+export {
+  name,
+  email,
+  password,
+  user_exists,
+  invalid_credentials,
+  auth_provider,
+};
