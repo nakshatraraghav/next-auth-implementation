@@ -8,7 +8,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 
-import { login_user, register_user } from "@/helpers/form";
+import { login, register_user } from "@/helpers/form";
 import { DiscordLogoIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 
 type variant = "login" | "register";
@@ -54,10 +54,14 @@ export default function AuthForm() {
     }
 
     if (variant === "login") {
-      await login_user(input);
+      await login("credentials", input);
     }
 
     setLoading(false);
+  };
+
+  const handleOAuth = async (provider: "github" | "discord") => {
+    await login(provider);
   };
 
   return (
@@ -100,10 +104,20 @@ export default function AuthForm() {
           <div className="w-full border-t border-gray-300" />
         </div>
         <div className="mt-4 flex items-center justify-between space-x-2">
-          <Button variant={"oauth"}>
+          <Button
+            variant={"oauth"}
+            onClick={() => {
+              handleOAuth("github");
+            }}
+          >
             <GitHubLogoIcon />
           </Button>
-          <Button variant={"oauth"}>
+          <Button
+            variant={"oauth"}
+            onClick={() => {
+              handleOAuth("discord");
+            }}
+          >
             <DiscordLogoIcon />
           </Button>
         </div>

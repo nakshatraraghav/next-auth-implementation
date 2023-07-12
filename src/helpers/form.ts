@@ -1,13 +1,12 @@
-import { toast } from "react-hot-toast";
 import axios, { AxiosError } from "axios";
+import { toast } from "react-hot-toast";
 
+import { user_exists } from "@/server/schemas/auth/auth.error";
 import { FieldValues } from "react-hook-form";
-import {
-  invalid_credentials,
-  user_exists,
-} from "@/server/schemas/auth/auth.error";
 
-import { signIn } from "next-auth/react";
+import { getProviders, signIn } from "next-auth/react";
+
+type loginType = "credentials" | "discord" | "github";
 
 const user_created = "User has been created Sucessfully";
 
@@ -36,6 +35,29 @@ export async function login_user(input: FieldValues) {
     ...input,
     redirect: false,
   });
+
+  if (response?.error) {
+    toast.error("Invalid Credentials");
+  }
+
+  if (response?.ok && !response.error) {
+    toast.success("Logged in successfully");
+  }
+}
+
+export async function login(type: loginType, input?: FieldValues) {
+  let response;
+
+  if (type === "credentials") {
+    response = await signIn("credentials", {
+      ...input,
+      redirect: false,
+    });
+  } else {
+    response = await signIn(type, {
+      redirect: false,
+    });
+  }
 
   if (response?.error) {
     toast.error("Invalid Credentials");
