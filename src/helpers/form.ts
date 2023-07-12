@@ -1,7 +1,13 @@
 import { toast } from "react-hot-toast";
 import axios, { AxiosError } from "axios";
+
 import { FieldValues } from "react-hook-form";
-import { user_exists } from "@/server/schemas/auth/auth.error";
+import {
+  invalid_credentials,
+  user_exists,
+} from "@/server/schemas/auth/auth.error";
+
+import { signIn } from "next-auth/react";
 
 const user_created = "User has been created Sucessfully";
 
@@ -22,5 +28,20 @@ export async function register_user(input: FieldValues) {
     } else {
       toast.error("Unknow Error");
     }
+  }
+}
+
+export async function login_user(input: FieldValues) {
+  const response = await signIn("credentials", {
+    ...input,
+    redirect: false,
+  });
+
+  if (response?.error) {
+    toast.error("Invalid Credentials");
+  }
+
+  if (response?.ok && !response.error) {
+    toast.success("Logged in successfully");
   }
 }

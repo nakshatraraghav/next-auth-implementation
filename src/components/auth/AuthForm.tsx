@@ -8,7 +8,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 
-import { register_user } from "@/helpers/form";
+import { login_user, register_user } from "@/helpers/form";
 import { DiscordLogoIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 
 type variant = "login" | "register";
@@ -53,7 +53,8 @@ export default function AuthForm() {
       await register_user(input);
     }
 
-    if (variant === "register") {
+    if (variant === "login") {
+      await login_user(input);
     }
 
     setLoading(false);
