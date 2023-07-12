@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+
+  conversations Conversation[]
+  messages      Message[]      @relation("sent_message")
+  seenMessages  Message[]      @relation("seen_messages")
+
+  @@index([email])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Message {
+  id     String   @id @default(cuid())
+  body   String   @db.LongText
+  image  String?
+  sentAt DateTime @default(now())
+
+  senderId       String
+  conversationId String
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  sender       User         @relation("sent_message", fields: [senderId], references: [id])
+
+  seen User[] @relation("seen_messages")
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@map("messages")
+}
+
+model Conversation {
+  id            String   @id @default(cuid())
+  name          String?
+  isGroup       Boolean
+  lastMessageAt DateTime
+
+  createdAt DateTime @default(now())
+
+  messages     Message[]
+  participants User[]
+
+  @@map("conversations")
+}
