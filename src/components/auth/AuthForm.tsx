@@ -6,6 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, registerSchema } from "@/server/schemas/auth/auth.schema";
 
 import Input from "@/components/ui/input";
+import Button from "@/components/ui/button";
+
+import { GitHubLogoIcon, DiscordLogoIcon } from "@radix-ui/react-icons";
 
 type variant = "login" | "register";
 
@@ -71,8 +74,35 @@ export default function AuthForm() {
           register={register}
           errors={errors}
         />
-        <button type="submit">Submit</button>
+        <Button size={"fw"} type="submit" className="mt-2">
+          {variant === "login" ? "Log In" : "Sign Up"}
+        </Button>
       </form>
+      <div className="mt-6">
+        <div className="flex justify-between items-center">
+          <div className="w-full border-t border-gray-300" />
+          <p className="text-sm text-center w-full font-semibold">Or</p>
+          <div className="w-full border-t border-gray-300" />
+        </div>
+        <div className="mt-4 flex items-center justify-between space-x-2">
+          <Button variant={"oauth"}>
+            <GitHubLogoIcon />
+          </Button>
+          <Button variant={"oauth"}>
+            <DiscordLogoIcon />
+          </Button>
+        </div>
+        <div className="flex gap-2 justify-center text-sm mt-6 px-2 ">
+          <div>
+            {variant === "login"
+              ? "New to conversify"
+              : "Already have an Account"}
+          </div>
+          <div className="underline cursor-pointer" onClick={toggle}>
+            {variant === "login" ? "Create an Account" : "Log In"}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
