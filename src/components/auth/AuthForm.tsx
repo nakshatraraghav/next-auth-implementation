@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useCallback, useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +9,11 @@ import { loginSchema, registerSchema } from "@/server/schemas/auth/auth.schema";
 import Input from "@/components/ui/input";
 import Button from "@/components/ui/button";
 
+import { toast } from "react-hot-toast";
+
 import { GitHubLogoIcon, DiscordLogoIcon } from "@radix-ui/react-icons";
+import { user_exists } from "@/server/schemas/auth/auth.error";
+import { register_user } from "@/helpers/form";
 
 type variant = "login" | "register";
 
@@ -46,14 +50,14 @@ export default function AuthForm() {
     }
   }, [variant]);
 
-  const submit: SubmitHandler<FieldValues> = (data) => {
+  const submit: SubmitHandler<FieldValues> = async (input) => {
     setLoading(true);
 
     if (variant === "register") {
-      axios.post("/api/register", data);
+      await register_user(input);
     }
 
-    if (variant === "login") {
+    if (variant === "register") {
     }
 
     setLoading(false);
