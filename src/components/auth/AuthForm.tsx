@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useCallback, useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +15,7 @@ type variant = "login" | "register";
 
 export default function AuthForm() {
   const [variant, setVariant] = useState<variant>("register");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const schema = useMemo(() => {
     if (variant === "login") {
@@ -45,7 +47,16 @@ export default function AuthForm() {
   }, [variant]);
 
   const submit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+    setLoading(true);
+
+    if (variant === "register") {
+      axios.post("/api/register", data);
+    }
+
+    if (variant === "login") {
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -58,6 +69,7 @@ export default function AuthForm() {
             label="Name"
             register={register}
             errors={errors}
+            disabled={loading}
           />
         )}
         <Input
@@ -66,6 +78,7 @@ export default function AuthForm() {
           label="Email Address"
           register={register}
           errors={errors}
+          disabled={loading}
         />
         <Input
           id="password"
@@ -73,8 +86,9 @@ export default function AuthForm() {
           label="Password"
           register={register}
           errors={errors}
+          disabled={loading}
         />
-        <Button size={"fw"} type="submit" className="mt-2">
+        <Button size={"fw"} type="submit" className="mt-2" loading={loading}>
           {variant === "login" ? "Log In" : "Sign Up"}
         </Button>
       </form>
