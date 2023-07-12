@@ -11,6 +11,8 @@ import { ZodError } from "zod";
 import { findUserByEmail } from "./services/user.service";
 import checkPasswords from "./utils/check-password";
 
+import { invalid_credentials } from "@/server/schemas/auth/auth.error";
+
 const options: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -45,7 +47,7 @@ const options: AuthOptions = {
           const user = await findUserByEmail(data.email);
 
           if (!user) {
-            throw new Error("Invalid Credentials");
+            throw new Error(invalid_credentials);
           }
 
           if (!user.password) {
@@ -57,15 +59,15 @@ const options: AuthOptions = {
           const valid = await checkPasswords(user.password, data.password);
 
           if (!valid) {
-            throw new Error("Invalid Credentials");
+            throw new Error(invalid_credentials);
           }
 
           return user;
         } catch (error) {
           if (error instanceof ZodError) {
-            throw new Error("Invalid Credentials, Please check and try again");
+            throw new Error(invalid_credentials);
           }
-          throw new Error("Invalid Credentials");
+          throw new Error(invalid_credentials);
         }
       },
     }),
