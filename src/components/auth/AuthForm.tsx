@@ -1,19 +1,15 @@
 "use client";
 
-import axios, { AxiosError } from "axios";
+import { loginSchema, registerSchema } from "@/server/schemas/auth/auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, registerSchema } from "@/server/schemas/auth/auth.schema";
 
-import Input from "@/components/ui/input";
 import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
 
-import { toast } from "react-hot-toast";
-
-import { GitHubLogoIcon, DiscordLogoIcon } from "@radix-ui/react-icons";
-import { user_exists } from "@/server/schemas/auth/auth.error";
 import { register_user } from "@/helpers/form";
+import { DiscordLogoIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 
 type variant = "login" | "register";
 
